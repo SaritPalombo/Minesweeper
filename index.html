@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINESWEEPER</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body onload="initGame()">
+    <div class="main-container">
+        <div class="content-container">
+            <h1>⚙️MINESWEEPER⚙️</h1>
+            <div class="level-options-container">
+                <p>Beginner Record: || Medium Record: || Expert Record:</p>
+                <input type="radio" id="Beginner(16)" name="level" value="Beginner(16)" checked
+                    onchange="onChangeLevel(16)">
+                <label class="level-label" for="Beginner(16)">Beginner(16)</label>
+                <input type="radio" id="Medium(64)" name="level" value="Medium(64)" onchange="onChangeLevel(64)">
+                <label class="level-label" for="Medium(64)">Medium(64)</label>
+                <input type="radio" id="Expert!(144)" name="level" value="Expert!(144)" onchange="onChangeLevel(144)">
+                <label class="level-label" for="Expert!(144)">Expert!(144)</label>
+            </div>
+            <div class="options-container">
+                <div class="option time-container">⏳Time:</div>
+                <div class="option mines-left-container">💥Mines Left:</div>
+                <div class="option Lives-container">♥️Lives:</div>
+            </div>
+            <button help class="btn1">💡</button>
+            <button help class="btn2">💡</button>
+            <button help class="btn3">💡</button> </br>
+            <button class="restart" onclick="restart()">😃</button>
+            <div class="board-container">
+                <table id="table">
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
