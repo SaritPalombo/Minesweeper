@@ -145,3 +145,7 @@ td {
     font-family: Bradley Hand;
     cursor: pointer;
   }
+
+.shown {
+    background-color: aqua;
+}

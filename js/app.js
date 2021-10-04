@@ -5,6 +5,7 @@ gMinesCount = 2
 EMPTY_CELL = "0"
 MINE_CELL = "💣"
 
+
 function initGame() {
 
 
@@ -12,7 +13,8 @@ function initGame() {
     for (var i = 0; i < gLevelSizeBoard; i++) {
         var boardRow = []
         for (var j = 0; j < gLevelSizeBoard; j++) {
-            boardRow.push({ type: EMPTY_CELL, isShown: false })
+            boardRow.push({ value: 0, isShown: false })
+
         }
         gBoard.push(boardRow)
     }
@@ -20,7 +22,7 @@ function initGame() {
     var randomMines = getRandomMines(gMinesCount)
     for (var i = 0; i < randomMines.length; i++) {
         var mineLocation = randomMines[i]
-        gBoard[mineLocation.i][mineLocation.j] = { type: MINE_CELL, isShown: false }
+        gBoard[mineLocation.i][mineLocation.j] = { value: MINE_CELL, isShown: false }
     }
 
     for (var i = 0; i < gLevelSizeBoard; i++) {
@@ -44,50 +46,28 @@ function consoleLogBoard() {
     for (var i = 0; i < gLevelSizeBoard; i++) {
         var row = i + ":  "
         for (var j = 0; j < gLevelSizeBoard; j++) {
-            row += gBoard[i][j].type + " "
+            row += gBoard[i][j].value + " "
         }
         console.log(row)
     }
 }
 
-function setMinesNegsCount(i, j) {
-
-
-    var isLeftBorder = j === 0
-    var isRightBorder = j === (gLevelSizeBoard - 1)
-    var isTopBorder = i === 0
-    var isBottonBorder = i === (gLevelSizeBoard - 1)
-
+function setMinesNegsCount(iCell, jCell) {
+    var count = 0
     var neighbors = 0
-    // console.log(i, j, isLeftBorder, isRightBorder, isTopBorder, isBottonBorder)
-    if (!isTopBorder && !isLeftBorder && gBoard[i - 1][j - 1] === MINE_CELL) {
-        neighbors++
-    }
-    if (!isTopBorder && gBoard[i - 1][j] === MINE_CELL) {
-        neighbors++
-    }
-    if (!isTopBorder && !isRightBorder && gBoard[i - 1][j + 1] === MINE_CELL) {
-        neighbors++
-    }
-    if (!isLeftBorder && gBoard[i][j - 1] === MINE_CELL) {
-        neighbors++
-    }
-    if (!isRightBorder && !isBottonBorder && gBoard[i + 1][j + 1] === MINE_CELL) {
-        neighbors++
-    }
-    if (!isBottonBorder && gBoard[i + 1][j] === MINE_CELL) {
-        neighbors++
-    }
-    if (!isRightBorder && gBoard[i][j + 1] === MINE_CELL) {
-        neighbors++
-    }
-    if (!isBottonBorder && !isLeftBorder && gBoard[i + 1][j - 1] === MINE_CELL) {
-        neighbors++
-    }
+    for (var i = iCell - 1; i <= iCell + 1; i++) {
+        if (i < 0 || i >= gLevelSizeBoard) continue
+        for (var j = jCell - 1; j <= jCell + 1; j++) {
+            if (j < 0 || j >= gLevelSizeBoard) continue
+            if (i === iCell && j === jCell) continue
 
+            if (gBoard[i][j].value === MINE_CELL) neighbors++
+        }
+    }
+    // console.log(count)
     console.log(neighbors)
     if (neighbors !== 0) {
-        gBoard[i][j] = { type: neighbors, isShown: false }
+        gBoard[iCell][jCell] = { value: neighbors, isShown: false }
     }
 }
 
@@ -108,9 +88,14 @@ function getRandomMines(minesCount) {
     return randomMinesLocations
 }
 
-function restartGame() {
-
+function cellClicked(elCell, i, j) {
+    console.log(elCell, i, j)
+    if (gBoard[i][j].value !== MINE_CELL) {
+        gBoard[i][j].isShown = true
+        renderBoard()
+    }
 }
+
 
 function renderBoard() {
     var boardElement = document.getElementById('table')
@@ -125,7 +110,7 @@ function renderBoard() {
             data-i="${i}" 
             data-j="${j}" 
             onclick="cellClicked(this,${i}, ${j})"
-            > ${cell.type} </td>`;
+            > ${cell.isShown ? cell.value : ""} </td>`;
         }
         strHtml += '</tr>'
     }
