@@ -1,10 +1,11 @@
-gBoard = null;
-gLevels = [
+'use strict'
+var gBoard;
+var gLevels = [
   { SIZE: 4, MINES: 2 },
   { SIZE: 8, MINES: 12 },
   { SIZE: 12, MINES: 30 },
 ];
-gGame = {
+var gGame = {
   isOn: false,
   isFinished: false,
   level: 0,
@@ -13,12 +14,14 @@ gGame = {
   secsPassed: 0,
   lives: 3,
 };
-timer = null;
+var timer = null;
 
-MINE_VALUE = '💣';
-MARKED_VALUE = '🚩';
+const MINE_VALUE = '💣';
+const MARKED_VALUE = '🚩';
 
 function initGame() {
+
+
   gGame.isOn = false;
   gGame.isFinished = false;
   gGame.shownCount = 0;
@@ -27,6 +30,16 @@ function initGame() {
   gGame.lives = 3;
   clearInterval(timer);
 
+  generateBoard();
+  renderBoard();
+  renderMinesLeft();
+  renderLives();
+  renderTime();
+  renderSmily('😃');
+
+}
+
+function generateBoard() {
   var boardSize = getBoardSize();
   var minesCount = getBoardMinesCount();
 
@@ -51,13 +64,7 @@ function initGame() {
       if (gBoard[i][j].value !== MINE_VALUE) setMinesNegsCount(i, j);
     }
   }
-
   consoleLogBoard();
-  renderBoard();
-  renderMinesLeft();
-  renderLives();
-  renderTime();
-  renderSmily("😃");
 }
 
 function createBoardCell(value) {
@@ -76,12 +83,12 @@ function setMinesNegsCount(iCell, jCell) {
       if (gBoard[i][j].value === MINE_VALUE) neighbors++;
     }
   }
-  console.log(neighbors)
+  // console.log(neighbors)
   if (neighbors > 0) gBoard[iCell][jCell] = createBoardCell(neighbors);
 }
 
 function onChangeLevel(level) {
-  console.log("level", level);
+  console.log('level', level);
   gGame.level = level;
   initGame();
 }
@@ -97,7 +104,7 @@ function startGame() {
 }
 
 function rightCellClick(event, elCell, i, j) {
-  // console.log("rightCellClick", elCell, i, j)
+  console.log('rightCellClick', event, elCell, i, j)
   if (gGame.isFinished) return;
 
   startGame();
@@ -120,13 +127,16 @@ function rightCellClick(event, elCell, i, j) {
 }
 
 function leftCellClick(event, elCell, i, j) {
-  // console.log("leftCellClick", elCell, i, j)
+  // console.log(elCell)
+  console.log('leftCellClick', event, elCell, i, j)
 
   if (gGame.isFinished) return;
 
+  while (gGame.shownCount === 0 && gBoard[i][j].value === MINE_VALUE)
+    generateBoard()
+
   startGame();
 
-  if (gGame.shownCount === 0 && gBoard[i][j].value === MINE_VALUE) return;
   if (gBoard[i][j].isShown) return;
 
   gGame.shownCount++;
@@ -135,6 +145,8 @@ function leftCellClick(event, elCell, i, j) {
   if (gBoard[i][j].value === MINE_VALUE) {
     gGame.lives--;
     renderLives();
+    gGame.markedCount++
+    renderMinesLeft();
   } else if (gBoard[i][j].value === 0) {
     expandShown(i, j);
   }
@@ -152,7 +164,8 @@ function finishGame(smily) {
 function checkGameOver() {
   if (gGame.lives === 0) {
     finishGame('🤯');
-  } else if (gGame.shownCount >= getBoardSize() ** 2 - getBoardMinesCount()) {
+  } else if (gGame.shownCount >= getBoardSize() ** 2) {
+    console.log(gGame.shownCount, getBoardSize() ** 2);
     finishGame('😎');
   }
 }
@@ -196,7 +209,7 @@ function renderBoard() {
             onclick="leftCellClick(event,this,${i}, ${j})"
             > ${value} </td>`;
     }
-    strHtml += "</tr>";
+    strHtml += '</tr>';
     console.table()
   }
   boardElement.innerHTML = strHtml;
